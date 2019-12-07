@@ -35,10 +35,10 @@ func main() {
 
 	msGraphClient := msgraph4go.New(".token.json", clientID, []string{"User.Read"})
 
-	resp, err := msGraphClient.GetMyProfile(nil)
+	user, err := msGraphClient.GetMyProfile(nil)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println(msgraph4go.VarToJsonString(resp))
+	fmt.Println(msgraph4go.VarToJsonString(user))
 }
