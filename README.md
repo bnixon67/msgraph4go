@@ -26,7 +26,25 @@ and then select **App registrations > New registration**.
 In order to run the examples, you need to set the MSCLIENTID environmental variable to the **Application (client) ID** provided.
 
 
-The current approach assumes the client runs on a host without a browser. The user is instructed to vist a URL to login and authorize the client. Once the login is successful, the user must copy the response URL and provide to the client program.
+The current approach assumes the client runs on a host without a browser. The user is instructed to vist a URL to login and authorize the client. Once the login is successful, the user must copy the response URL and provide to the client program. For example, on the first run without a token file:
+```
+~/go/src/github.com/bnixon67/msgraph4go/examples$ go run GetMyProfile.go 
+Vist the following URL in a browser to authenticate this application
+After authentication, copy the response URL from the browser
+https://login.microsoftonline.com/common/oauth2/v2.0/authorize?access_type=offline&client_id={client_id}&redirect_uri=https%3A%2F%2Flogin.microsoftonline.com%2Fcommon%2Foauth2%2Fnativeclient&response_type=code&scope=User.Read&state={state}
+```
+Copy and paste the URL into a browser with javascript enabled to login to your Microsoft account. Once logged in, then copy the URL from the browser into the program:
+```
+Enter the response URL:
+https://login.microsoftonline.com/common/oauth2/nativeclient?code={code}&state={state}
+{
+  "displayName": "Bill Nixon",
+  "givenName": "Bill",
+  "id": "16be860d241e39e5",
+  "surname": "Nixon",
+  "userPrincipalName": "bnixon67@gmail.com"
+}
+```
 
 The token is requested for offline access, which should include a refresh token to allow access for a long period of time.  The token is saved in the file provided to ```msgraph4go.New(...)```.
 
