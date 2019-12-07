@@ -25,6 +25,11 @@ and then select **App registrations > New registration**.
 
 In order to run the examples, you need to set the MSCLIENTID environmental variable to the **Application (client) ID** provided.
 
+
+The current approach assumes the client runs on a host without a browser. The user is instructed to vist a URL to login and authorize the client. Once the login is successful, the user must copy the response URL and provide to the client program.
+
+The token is requested for offline access, which should include a refresh token to allow access for a long period of time.  The token is saved in the file provided to ```msgraph4go.New(...)```.
+
 A simple example, which returns a JSON result:
 ```go
 // Get Microsoft Application (client) ID
