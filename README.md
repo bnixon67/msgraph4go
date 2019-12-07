@@ -19,11 +19,11 @@ and then select **App registrations > New registration**.
 
 4. When the **Register an application page** appears, enter your application's registration information:
 
-- **Name** - enter a meaningful name
+  - **Name** - enter a meaningful name
 
-- **Supported account types** - select one of the options based on your planned usage
+  - **Supported account types** - select one of the options based on your planned usage
 
-- **Redirect URI (optional)** - select **Public client (mobile & desktop)**, and then enter `https://login.microsoftonline.com/common/oauth2/nativeclient`
+  - **Redirect URI (optional)** - select **Public client (mobile & desktop)**, and then enter `https://login.microsoftonline.com/common/oauth2/nativeclient`
 
 In order to run the examples, you need to set the MSCLIENTID environmental variable to the **Application (client) ID** provided.
 
