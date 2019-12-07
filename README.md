@@ -66,7 +66,7 @@ if !present {
 
 msGraphClient := msgraph4go.New(".token.json", clientID, []string{"User.Read"})
 
-resp, err := msGraphClient.Get("/me/drive/root", nil)
+resp, err := msGraphClient.Get("/me", nil)
 if err != nil {
 	log.Fatal(err)
 }
@@ -83,8 +83,10 @@ if !present {
 
 msGraphClient := msgraph4go.New(".token.json", clientID, []string{"User.Read"})
 
-resp, err := msGraphClient.GetMyProfile(nil)
+user, err := msGraphClient.GetMyProfile(nil)
 if err != nil {
 	log.Fatal(err)
 }
+
+fmt.Println(msgraph4go.VarToJsonString(user)) 
 ```
