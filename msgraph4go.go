@@ -113,6 +113,12 @@ type MSGraphClient struct {
 //
 // The token is requested for offline access, which should include a refresh
 // token to allow access for a long period of time.
+//
+// clientID must be an application registered with the Microsoft Identity paltform.
+// See https://docs.microsoft.com/en-us/graph/auth-register-app-v2 for more information.
+//
+// scopes should include the permissions required to call the precding APIs.
+// See https://docs.microsoft.com/en-us/graph/permissions-reference for more information.
 func New(tokenFileName string, clientID string, scopes []string) *MSGraphClient {
 	// default Context that is never canceled, has no values, and has no deadline
 	ctx := context.Background()
