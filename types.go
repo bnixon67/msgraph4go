@@ -554,6 +554,8 @@ type SharepointIds struct {
 // Not all of the properties have been included from
 // https://docs.microsoft.com/en-us/graph/api/resources/user?view=graph-rest-1.0
 type User struct {
+	OData
+
 	// The telephone numbers for the user.
 	// Although this is a string collection, only one number can be set for this property.
 	BusinessPhones []string `json:"businessPhones,omitempty"`
