@@ -27,36 +27,34 @@ In order to run the examples, you need to set the MSCLIENTID environmental varia
 
 A simple example, which returns a JSON result:
 ```go
-        // Get Microsoft Application (client) ID
-        // The ID is not in the source code to avoid someone reusing the ID
-        clientID, present := os.LookupEnv("MSCLIENTID")
-        if !present {
-                log.Fatal("Must set MSCLIENTID")
-        }
+// Get Microsoft Application (client) ID
+// The ID is not in the source code to avoid someone reusing the ID
+clientID, present := os.LookupEnv("MSCLIENTID")
+if !present {
+	log.Fatal("Must set MSCLIENTID")
+}
 
-        msGraphClient := msgraph4go.New(".token.json", clientID, []string{"User.Read"})
+msGraphClient := msgraph4go.New(".token.json", clientID, []string{"User.Read"})
 
-        resp, err := msGraphClient.Get("/me/drive/root", nil)
-        if err != nil {
-                log.Fatal(err)
-        }
-
+resp, err := msGraphClient.Get("/me/drive/root", nil)
+if err != nil {
+	log.Fatal(err)
+}
 ```
 
 Another example that returns a custom User type:
 ```go
-        // Get Microsoft Application (client) ID
-        // The ID is not in the source code to avoid someone reusing the ID
-        clientID, present := os.LookupEnv("MSCLIENTID")
-        if !present {
-                log.Fatal("Must set MSCLIENTID")
-        }
+// Get Microsoft Application (client) ID
+// The ID is not in the source code to avoid someone reusing the ID
+clientID, present := os.LookupEnv("MSCLIENTID")
+if !present {
+	log.Fatal("Must set MSCLIENTID")
+}
 
-        msGraphClient := msgraph4go.New(".token.json", clientID, []string{"User.Read"})
+msGraphClient := msgraph4go.New(".token.json", clientID, []string{"User.Read"})
 
-        resp, err := msGraphClient.GetMyProfile(nil)
-        if err != nil {
-                log.Fatal(err)
-        }
-
+resp, err := msGraphClient.GetMyProfile(nil)
+if err != nil {
+	log.Fatal(err)
+}
 ```
