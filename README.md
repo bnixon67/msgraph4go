@@ -26,7 +26,7 @@ and then select **App registrations > New registration**.
 In order to run the examples, you need to set the MSCLIENTID environmental variable to the **Application (client) ID** provided.
 
 A simple example, which returns a JSON result:
-```
+```go
         // Get Microsoft Application (client) ID
         // The ID is not in the source code to avoid someone reusing the ID
         clientID, present := os.LookupEnv("MSCLIENTID")
@@ -44,7 +44,7 @@ A simple example, which returns a JSON result:
 ```
 
 Another example that returns a custom User type:
-```
+```go
         // Get Microsoft Application (client) ID
         // The ID is not in the source code to avoid someone reusing the ID
         clientID, present := os.LookupEnv("MSCLIENTID")
