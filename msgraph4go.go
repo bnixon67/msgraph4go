@@ -27,6 +27,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -49,6 +50,36 @@ const (
 func init() {
 	// log with date, time, file name, and line number
 	log.SetFlags(log.Lshortfile)
+}
+
+func (c *MSGraphClient) GetFile(urlString string, filepath string) (err error) {
+
+	// parse the URL string
+	url, err := url.Parse(urlString)
+	if err != nil {
+		return err
+	}
+
+	// execute the request
+	resp, err := c.httpClient.Get(url.String())
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	file, err := os.Create(filepath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	// write the body to the file
+	_, err = io.Copy(file, resp.Body)
+	if err != nil {
+		return err
+	}
+
+	return err
 }
 
 // Get executes the MS Graph API call, returning the response body.
@@ -123,11 +154,12 @@ func New(tokenFileName string, clientID string, scopes []string) *MSGraphClient 
 	// default Context that is never canceled, has no values, and has no deadline
 	ctx := context.Background()
 
+	scopes = append(scopes, "offline_access")
+
 	// OAuth2 configuration object
 	conf := &oauth2.Config{
 		ClientID: clientID,
-		// TODO: allow scopes to be passed into new
-		Scopes: scopes,
+		Scopes:   scopes,
 		Endpoint: oauth2.Endpoint{
 			AuthURL:  msAuthURL,
 			TokenURL: msTokenURL,

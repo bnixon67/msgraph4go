@@ -64,12 +64,17 @@ func (c *MSGraphClient) ListRecentFiles(query url.Values) (driveItems DriveItemR
 	return driveItems, err
 }
 
-// ListDriveItemChildren Return a collection of DriveItems in the children relationship of a DriveItem.
+// ListDriveItemChildrenByID return a collection of DriveItems in the children relationship
+// of a DriveItem.
+//
+// driveID should be a valid driveID or could be "me"
+//
+// itemID should be a valid itemID or could be "root"
 //
 // DriveItems with a non-null folder or package facet can have one or more child DriveItems.
-func (c *MSGraphClient) ListDriveItemChildren(query url.Values) (driveItems DriveItemResponse, err error) {
+func (c *MSGraphClient) ListDriveItemChildrenByID(driveID string, itemID string, query url.Values) (driveItems DriveItemResponse, err error) {
 	var body []byte
-	body, err = c.Get("/me/drive/root/children", query)
+	body, err = c.Get("/drives/"+driveID+"/items/"+itemID+"/children", query)
 	if err != nil {
 		return driveItems, err
 	}
@@ -77,4 +82,74 @@ func (c *MSGraphClient) ListDriveItemChildren(query url.Values) (driveItems Driv
 	err = json.Unmarshal(body, &driveItems)
 
 	return driveItems, err
+}
+
+// ListDriveItemChildrenByPath return a collection of DriveItems in the children relationship
+// of a DriveItem.
+//
+// driveID should be a valid driveID or could be "me"
+//
+// itemID should be a valid itemID or could be "root"
+//
+// DriveItems with a non-null folder or package facet can have one or more child DriveItems.
+func (c *MSGraphClient) ListDriveItemChildrenByPath(driveID string, path string, query url.Values) (driveItems DriveItemResponse, err error) {
+	var body []byte
+	var url string
+
+	if path == "" || path == "/" {
+		url = "/drives/" + driveID + "/items/root/children"
+	} else {
+		url = "/drives/" + driveID + "/root:/" + path + ":/children"
+	}
+
+	body, err = c.Get(url, query)
+	if err != nil {
+		return driveItems, err
+	}
+
+	err = json.Unmarshal(body, &driveItems)
+
+	return driveItems, err
+}
+
+// GetDriveItemByID return a DriveItem
+//
+// driveID should be a valid driveID or could be "me"
+//
+// itemID should be a valid itemID or could be "root"
+func (c *MSGraphClient) GetDriveItemByID(driveID string, itemID string, query url.Values) (driveItem DriveItem, err error) {
+	var body []byte
+	body, err = c.Get("/drives/"+driveID+"/items/"+itemID, query)
+	if err != nil {
+		return driveItem, err
+	}
+
+	err = json.Unmarshal(body, &driveItem)
+
+	return driveItem, err
+}
+
+// GetDriveItemByPath return a DriveItem
+//
+// driveID should be a valid driveID or could be "me"
+//
+// itemID should be a valid itemID or could be "root"
+func (c *MSGraphClient) GetDriveItemByPath(driveID string, path string, query url.Values) (driveItem DriveItem, err error) {
+	var body []byte
+	var url string
+
+	if path == "" || path == "/" {
+		url = "/drives/" + driveID + "/items/root"
+	} else {
+		url = "/drives/" + driveID + "/root:/" + path + ":"
+	}
+
+	body, err = c.Get(url, query)
+	if err != nil {
+		return driveItem, err
+	}
+
+	err = json.Unmarshal(body, &driveItem)
+
+	return driveItem, err
 }

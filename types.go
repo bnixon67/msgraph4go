@@ -84,6 +84,9 @@ type DriveResponse struct {
 
 // DriveItem represents a file, folder, or other item stored in a drive.
 type DriveItem struct {
+	OData
+	DownloadURL string `json:"@microsoft.graph.downloadUrl,omitempty"`
+
 	// TODO: audio
 	// TODO: content
 
@@ -150,7 +153,7 @@ type DriveItem struct {
 	SharepointIds *SharepointIds `json:"sharepointIds,omitempty"`
 
 	// Size of the remote item. Read-only.
-	Size *int64 `json:"size,omitempty"`
+	Size int64 `json:"size,omitempty"`
 
 	// TODO: specialFolder
 	// TODO: video

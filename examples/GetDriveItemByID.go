@@ -41,37 +41,23 @@ func main() {
 	)
 
 	query := url.Values{}
-	query.Set("$top", "5")
 
-	// nextLink will contain the link to the next set of driveItems, if any
-	var nextLink *url.URL
+	if len(os.Args) != 2 {
+		log.Fatalf("usage: %s path/to/file\n", os.Args[0])
+	}
 
-	// loop until no more results
-	for {
-		// get drive items
-		driveItems, err := msGraphClient.ListDriveItemChildrenByID("me", "root", query)
-		if err != nil {
-			log.Fatal(err)
-		}
+	// get drive item
+	driveItem, err := msGraphClient.GetDriveItemByID("me", os.Args[1], query)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-		// loop thru and display each driveItem
-		for _, item := range driveItems.Value {
-			fmt.Println("FILE:", item.Id, item.Name, item.LastModifiedDateTime)
-		}
+	fmt.Println("Name", driveItem.Name)
+	fmt.Println("Size", driveItem.Size)
+	fmt.Println("DownloadURL", driveItem.DownloadURL)
 
-		if driveItems.ODataNextLink == "" {
-			// if ODataNextLink is empty, then no more items
-			break
-		} else {
-			// parse nextLink for query parameters
-			nextLink, err = url.Parse(driveItems.ODataNextLink)
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			// set query parameters for nextLink
-			query = nextLink.Query()
-			fmt.Println(query)
-		}
+	err = msGraphClient.GetFile(driveItem.DownloadURL, driveItem.Name+".download")
+	if err != nil {
+		log.Fatal(err)
 	}
 }
