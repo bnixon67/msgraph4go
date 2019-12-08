@@ -19,6 +19,7 @@ package main
 
 import (
 	"bufio"
+	"encoding/csv"
 	"fmt"
 	"log"
 	"net/url"
@@ -63,6 +64,8 @@ func list(c *msgraph4go.MSGraphClient, path string) (err error) {
 	// nextLink will contain the link to the next set of driveItems, if any
 	var nextLink *url.URL
 
+	fileType := ""
+
 	// loop until no more results
 	for {
 		// get drive items
@@ -74,11 +77,20 @@ func list(c *msgraph4go.MSGraphClient, path string) (err error) {
 		// loop thru and display each driveItem
 		for _, item := range driveItems.Value {
 			t, _ := time.Parse(time.RFC3339, item.LastModifiedDateTime)
-			fmt.Printf("%s %17s %s\t%s\n",
+			if item.File != nil {
+				fileType = ""
+			}
+			if item.Folder != nil {
+				fileType = "/"
+			}
+			if item.Package != nil {
+				fileType = "*"
+			}
+			fmt.Printf("%s %16s %s%s\n",
 				t.Local().Format("01/02/2006 03:04 PM"),
 				CommaFormat(item.Size),
-				item.Id,
 				item.Name,
+				fileType,
 			)
 		}
 
@@ -97,6 +109,16 @@ func list(c *msgraph4go.MSGraphClient, path string) (err error) {
 		}
 	}
 	return err
+}
+
+func help() {
+	fmt.Print(`CLI commands
+exit, quit - exit or quit the program
+list, dir, ls [path] - list contents of directory
+pwd - current directory
+cd [path] - change to directory, or root if no path is provided
+get path/to/file path/to/download - download file
+`)
 }
 
 func main() {
@@ -119,6 +141,12 @@ func main() {
 
 	pwd := ""
 
+	user, err := msGraphClient.GetMyProfile(nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("User", user.UserPrincipalName)
+
 Loop:
 	for {
 		fmt.Print(pwd + "> ")
@@ -129,41 +157,88 @@ Loop:
 
 		line := strings.TrimSpace(scanner.Text())
 
-		words := strings.Fields(line)
+		// nothing to do
+		if line == "" {
+			continue
+		}
 
-		var err error
-		//var itemID string
+		// use csv reader to split command line and handle embedded quotes
+		// https://stackoverflow.com/questions/47489745/splitting-a-string-at-space-except-inside-quotation-marks-go
+		reader := csv.NewReader(strings.NewReader(line))
+		reader.Comma = ' ' // space
+		fields, err := reader.Read()
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
 
-		switch strings.ToLower(words[0]) {
+		// dispatch based on first word in input
+		switch strings.ToLower(fields[0]) {
+
+		case "help":
+			help()
+
 		case "exit", "quit":
 			break Loop
-		case "list", "dir", "ls":
-			var path string
 
-			if len(words) == 1 {
-				path = pwd
+		case "list", "dir", "ls":
+			var filePath string
+
+			if len(fields) == 1 {
+				filePath = pwd
 			} else {
-				path = words[1]
+				if pwd == "" {
+					filePath = fields[1]
+				} else {
+					filePath = path.Join(pwd, fields[1])
+				}
 			}
 
-			_ = list(msGraphClient, path)
+			err = list(msGraphClient, filePath)
 			if err != nil {
 				fmt.Println("Error:", err)
 			}
+
 		case "pwd":
 			fmt.Println("pwd =", pwd)
+
 		case "cd":
-			if len(words) == 1 {
+			if len(fields) == 1 {
 				pwd = ""
 			} else {
 				if pwd == "" {
-					pwd = words[1]
+					pwd = fields[1]
 				} else {
-					pwd = path.Join(pwd, words[1])
+					pwd = path.Join(pwd, fields[1])
 				}
 			}
+			if (pwd == ".") || (pwd == "..") {
+				pwd = ""
+			}
+
+		case "get":
+			if len(fields) != 3 {
+				fmt.Println("get path/to/file download_location")
+				break
+			}
+
+			driveItem, err := msGraphClient.GetDriveItemByPath("me", fields[1], nil)
+			if err != nil {
+				fmt.Println("Cannot GetDriveItemByPath", fields[1])
+				fmt.Println(err)
+				break
+			}
+
+			fmt.Println("Name", driveItem.Name, "Size", driveItem.Size)
+			fmt.Println("DownloadURL", driveItem.DownloadURL)
+
+			err = msGraphClient.GetFile(driveItem.DownloadURL, fields[2])
+			if err != nil {
+				fmt.Println("Cannot GetFile:", err)
+			}
+
 		default:
-			fmt.Println("Unknown command:", words[0])
+			fmt.Println("Unknown command:", fields[0])
 		}
 	}
 	if err := scanner.Err(); err != nil {
