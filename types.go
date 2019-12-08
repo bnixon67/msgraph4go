@@ -133,7 +133,9 @@ type DriveItem struct {
 	// The name of the item (filename and extension). Read-write.
 	Name string `json:"name,omitempty"`
 
-	// TODO: package
+	// If present, indicates that this item is a package instead of a folder or file.
+	// Packages are treated like files in some contexts and folders in others. Read-only.
+	Package *Package `json:"package,omitempty"`
 
 	// Parent information, if the item has a parent. Read-write.
 	ParentReference *ItemReference `json:"parentReference,omitempty"`
