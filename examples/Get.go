@@ -35,9 +35,9 @@ func main() {
 		log.Fatal("Must set MSCLIENTID")
 	}
 
-	msGraphClient := msgraph4go.New(".token.json", clientID, []string{"User.Read"})
+	msGraphClient := msgraph4go.New(".token.json", clientID, []string{"User.Read", "Mail.Read"})
 
-	resp, err := msGraphClient.Get("/me/drive/root", nil)
+	resp, err := msGraphClient.Get("/me/messages", nil)
 	if err != nil {
 		log.Fatal(err)
 	}

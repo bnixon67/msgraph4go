@@ -100,6 +100,7 @@ func (c *MSGraphClient) Get(urlString string, query url.Values) (body []byte, er
 	// add the query parameters to the URL
 	url.RawQuery = query.Encode()
 
+	//fmt.Println("DEBUG:", url.String())
 	// execute the request
 	resp, err := c.httpClient.Get(url.String())
 	if err != nil {
