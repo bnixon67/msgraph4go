@@ -35,7 +35,7 @@ func (c *MSGraphClient) ListNotebooks(query url.Values) (response NotebookCollec
 }
 
 // ListPages retrives a list of Page objects
-func (c *MSGraphClient) ListPages(query url.Values) (response PageResponse, err error) {
+func (c *MSGraphClient) ListPages(query url.Values) (response PageCollection, err error) {
 	body, err := c.Get("/me/onenote/pages", query)
 	if err != nil {
 		return response, err
