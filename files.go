@@ -19,6 +19,7 @@ package msgraph4go
 
 import (
 	"encoding/json"
+	"io"
 	"net/url"
 )
 
@@ -145,6 +146,25 @@ func (c *MSGraphClient) GetDriveItemByPath(driveID string, path string, query ur
 	}
 
 	body, err = c.Get(url, query)
+	if err != nil {
+		return driveItem, err
+	}
+
+	err = json.Unmarshal(body, &driveItem)
+
+	return driveItem, err
+}
+
+// UploadNewFile is a simple upload API allows you to provide the
+// contents of a new file or update the contents of an existing file in a
+// single API call. This method only supports files up to 4MB in size.
+func (c *MSGraphClient) UploadNewFile(query url.Values, driveID string, parentID string, fileName string, data io.Reader) (driveItem DriveItem, err error) {
+	var body []byte
+	var url string
+
+	url = "/drives/" + driveID + "/items/" + parentID + ":/" + fileName + ":/content"
+
+	body, err = c.Put(url, query, data)
 	if err != nil {
 		return driveItem, err
 	}
