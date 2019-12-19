@@ -67,7 +67,7 @@ type BaseItem struct {
 	LastModifiedBy *IdentitySet `json:"lastModifiedBy,omitempty"`
 
 	// Date and time the item was last modified. Read-only.
-	LastModifiedDateTime string `json:"LastModifiedDateTime,omitempty"`
+	LastModifiedDateTime string `json:"lastModifiedDateTime,omitempty"`
 
 	// The name of the item. Read-write.
 	Name string `json:"name,omitempty"`
@@ -93,6 +93,8 @@ type DateTimeTimeZone struct {
 
 // Drive is the top level object representing a user's OneDrive or a document library in SharePoint.
 type Drive struct {
+	OData
+
 	BaseItem
 
 	// Describes the type of drive represented by this resource.
