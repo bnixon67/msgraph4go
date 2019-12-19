@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/bnixon67/msgraph4go"
 )
@@ -33,15 +34,21 @@ func main() {
 		log.Fatal("Must set MSCLIENTID")
 	}
 
-	msGraphClient := msgraph4go.New(".token.json", clientID, []string{
-		"User.Read", "Files.ReadWrite", "Files.ReadWrite.All", "Sites.ReadWrite.All"})
+	if len(os.Args) != 2 {
+		log.Fatalf("usage: %s path/to/file\n", os.Args[0])
+	}
 
-	data, err := os.Open("UploadNewFile.go")
+	data, err := os.Open(os.Args[1])
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	driveItem, err := msGraphClient.UploadNewFile(nil, "me", "root", "foo.txt", data)
+	msGraphClient := msgraph4go.New(".token.json", clientID, []string{
+		"User.Read", "Files.ReadWrite", "Files.ReadWrite.All", "Sites.ReadWrite.All"})
+
+	_, fileName := filepath.Split(os.Args[1])
+
+	driveItem, err := msGraphClient.UploadNewFile(nil, "me", "root", fileName, data)
 	if err != nil {
 		log.Fatal(err)
 	}
