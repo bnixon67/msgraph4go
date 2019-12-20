@@ -85,6 +85,28 @@ func (c *MSGraphClient) ListDriveItemChildrenByID(driveID string, itemID string,
 	return driveItems, err
 }
 
+// ListDriveItemVersion lists versions of a DriveItem.
+//
+// driveID should be a valid driveID or could be "me"
+//
+// OneDrive and SharePoint can be configured to retain the history for
+// files. Depending on the service and configuration, a new version can be
+// created for each edit, each time the file is saved, manually, or never.
+//
+// Previous versions of a document may be retained for a finite period of
+// time depending on admin settings which may be unique per user or location.
+func (c *MSGraphClient) ListDriveItemVersions(driveID string, itemID string, query url.Values) (driveItemVersionResponse DriveItemVersionResponse, err error) {
+	var body []byte
+	body, err = c.Get("/drives/"+driveID+"/items/"+itemID+"/versions", query)
+	if err != nil {
+		return driveItemVersionResponse, err
+	}
+
+	err = json.Unmarshal(body, &driveItemVersionResponse)
+
+	return driveItemVersionResponse, err
+}
+
 // ListDriveItemChildrenByPath return a collection of DriveItems in the children relationship
 // of a DriveItem.
 //

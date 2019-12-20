@@ -209,6 +209,32 @@ type DriveItemResponse struct {
 	Value []DriveItem `json:"value"`
 }
 
+// DriveItemVersion represents a specific version of a DriveItem.
+type DriveItemVersion struct {
+	// ID is the id of the version. Read-only.
+	ID string `json:"id"`
+
+	// Identity of the user which last modified the version. Read-only.
+	LastModifiedBy IdentitySet `json:"lastModifiedBy"`
+
+	// LastModifiedDateTime is Date and time the version was last modified. Read-only.
+	LastModifiedDateTime string `json:"lastModifiedDateTime"`
+
+	// Publication indicates the publication status of this particular version. Read-only.
+	Publication *PublicationFacet `json:"publication,omitempty"`
+
+	// Size indicates the size of the content stream for this version of the item.
+	Size int `json:"size"`
+
+	// TODO: Content
+}
+
+// DriveItemVersionResponse is a collection of DriveItemVersion types
+type DriveItemVersionResponse struct {
+	OData
+	Value []DriveItemVersion `json:"value"`
+}
+
 // EmailAddress is the name and email address of a contact or message recipient.
 type EmailAddress struct {
 	// Address is the email address of the person or entity.
@@ -675,6 +701,18 @@ type ProfilePhoto struct {
 	ODataContext          string `json:"@odata.context"`
 	ODataMediaContentType string `json:"@odata.mediaContentType"`
 	ODataMediaEtag        string `json:"@odata.mediaEtag"`
+}
+
+// PublicationFacet provides details on the published status of a
+// driveItemVersion or driveItem resource.
+type PublicationFacet struct {
+	// Level is the state of publication for this document.
+	// Either published or checkout. Read-only.
+	Level string `json:"level"`
+
+	// VersionID is The unique identifier for the version that is
+	// visible to the current caller. Read-only.
+	VersionID string `json:"versionId"`
 }
 
 // Quota provides details about space constrains on a Drive resource.
