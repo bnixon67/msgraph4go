@@ -19,6 +19,7 @@ package msgraph4go
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/url"
 )
@@ -83,6 +84,43 @@ func (c *MSGraphClient) ListDriveItemChildrenByID(driveID string, itemID string,
 	err = json.Unmarshal(body, &driveItems)
 
 	return driveItems, err
+}
+
+// ListDriveItemPermissionsByID returns a collection of Permission objects.
+//
+// driveID should be a valid driveID or could be "me"
+//
+// itemID should be a valid itemID or could be "root"
+func (c *MSGraphClient) ListDriveItemPermissionsByID(driveID string, itemID string, query url.Values) (permissions PermissionsResponse, err error) {
+	var body []byte
+	body, err = c.Get("/drives/"+driveID+"/items/"+itemID+"/permissions", query)
+	if err != nil {
+		return permissions, err
+	}
+
+	err = json.Unmarshal(body, &permissions)
+
+	return permissions, err
+}
+
+// GetDriveItemPermission returns a collection of Permission objects.
+//
+// driveID should be a valid driveID or could be "me"
+//
+// itemID should be a valid itemID or could be "root"
+//
+// permID should be a valid permission ID
+func (c *MSGraphClient) GetDriveItemPermission(driveID string, itemID string, permID string, query url.Values) (permission Permission, err error) {
+	var body []byte
+	fmt.Println("/drives/" + driveID + "/items/" + itemID + "/permissions/" + permID)
+	body, err = c.Get("/drives/"+driveID+"/items/"+itemID+"/permissions/"+permID, query)
+	if err != nil {
+		return permission, err
+	}
+
+	err = json.Unmarshal(body, &permission)
+
+	return permission, err
 }
 
 // ListDriveItemVersion lists versions of a DriveItem.

@@ -18,10 +18,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package main
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"log"
+	"net/url"
 	"os"
 
 	"github.com/bnixon67/msgraph4go"
@@ -35,16 +34,24 @@ func main() {
 		log.Fatal("Must set MSCLIENTID")
 	}
 
-	msGraphClient := msgraph4go.New(".token.json", clientID, []string{"Files.Read"})
+	msGraphClient := msgraph4go.New(
+		".token.json",
+		clientID,
+		[]string{"User.Read", "Files.Read", "Files.Read.All", "Sites.Read.All"},
+	)
 
-	resp, err := msGraphClient.Get("/drives/me/items/"+os.Args[1]+"/permissions", nil)
+	query := url.Values{}
+
+	if len(os.Args) != 4 {
+		log.Fatalf("usage: %s drive-id item-id perm-id\n", os.Args[0])
+	}
+
+	// get drive item
+	permission, err := msGraphClient.GetDriveItemPermission(
+		os.Args[1], os.Args[2], os.Args[3], query)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	var out bytes.Buffer
-	json.Indent(&out, resp, "", " ")
-	fmt.Println("=== BEGIN ===")
-	fmt.Println(out.String())
-	fmt.Println("=== END ===")
+	fmt.Println(msgraph4go.VarToJsonString(permission))
 }

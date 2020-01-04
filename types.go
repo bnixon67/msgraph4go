@@ -683,6 +683,45 @@ type PageLinks struct {
 	OneNoteWebUrl ExternalLink `json:"oneNoteWebUrl"`
 }
 
+// Permission provides information about a sharing permission granted for a DriveItem resource.
+type Permission struct {
+	OData
+
+	// The unique identifier of the permission among all permissions on the item. Read-only.
+	ID string `json:"id"`
+
+	// For user type permissions, the details of the users & applications for this permission.
+	// Read-only.
+	GrantedTo *IdentitySet `json:"grantedTo,omitempty"`
+
+	// Provides a reference to the ancestor of the current permission,
+	// if it is inherited from an ancestor. Read-only.
+	InheritedFrom *ItemReference `json:"inheritedFrom,omitempty"`
+
+	// Details of any associated sharing invitation for this permission. Read-only.
+	Invitation *SharingInvitation `json:"invitation,omitempty"`
+
+	// Provides the link details of the current permission, if it is a link type permissions.
+	// Read-only.
+	Link *SharingLink `json:"link,omitempty"`
+
+	// The type of permission, e.g. read. Read-only.
+	//   read Provides the ability to read the metadata and contents of the item.
+	//   write Provides the ability to read and modify the metadata and contents of the item.
+	//   sp.owner For SharePoint and OneDrive for Business this represents the owner role.
+	//   sp.member For SharePoint and OneDrive for Business this represents the member role.
+	Roles []string `json:"roles"`
+
+	// A unique token that can be used to access this shared item via the shares API. Read-only.
+	ShareID string `json:"shareId,omitempty"`
+}
+
+// PermissionsResponse is a collection of Permission types
+type PermissionsResponse struct {
+	OData
+	Value []Permission `json:"value"`
+}
+
 // ProfilePhoto is a profile photo of a user, group or an Outlook contact accessed from Exchange Online.
 // It's binary data not encoded in base-64.
 //
@@ -847,6 +886,44 @@ type SharepointIds struct {
 
 	// The unique identifier (guid) for the item's site (SPWeb).
 	WebId string `json:"webId,omitempty"`
+}
+
+// SharingInvitation groups invitation-related data items into a single structure.
+type SharingInvitation struct {
+	// The email address provided for the recipient of the sharing invitation. Read-only.
+	Email string `json:"email"`
+
+	// Provides information about who sent the invitation that created this permission,
+	// if that information is available. Read-only.
+	InvitedBy *IdentitySet `json:"invitedBy,omitempty"`
+
+	// If true the recipient of the invitation needs to sign in in order to access the shared item.
+	// Read-only.
+	SignInRequired bool `json:"signInRequired"`
+}
+
+// SharingLink groups link-related data items into a single structure.
+//
+// If a Permission resource has a non-null sharingLink facet, the permission represents a sharing link
+// (as opposed to permissions granted to a person or group).
+type SharingLink struct {
+	// The app the link is associated with.
+	Application *Identity `json:"application,omitempty"`
+
+	// The type of the link created.
+	Type string `json:"type,omitempty"`
+
+	// The scope of the link represented by this permission. Value anonymous indicates the link
+	// is usable by anyone, organization indicates the link is only usable for users signed into
+	// the same tenant.
+	Scope string `json:"scope,omitempty"`
+
+	// For embed links, this property contains the HTML code for an <iframe> element that will
+	// embed the item in a webpage.
+	WebHTML string `json:"webHtml,omitempty"`
+
+	// A URL that opens the item in the browser on the OneDrive website.
+	WebURL string `json:"webUrl,omitempty"`
 }
 
 // SingleValueLegacyExtendedProperty is an extended property that contains a single value.
