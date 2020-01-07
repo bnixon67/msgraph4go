@@ -20,12 +20,34 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/bnixon67/msgraph4go"
 )
+
+func ParseCommandLine() (tokenFile string, scopes []string) {
+	flag.Usage = func() {
+		fmt.Fprintf(flag.CommandLine.Output(), "usage: %s [options] request\n", os.Args[0])
+		fmt.Fprintln(flag.CommandLine.Output(), "options:")
+		flag.PrintDefaults()
+	}
+
+	flag.StringVar(&tokenFile, "token", ".token.json", "path to `file` to use for token")
+
+	var scopeString string
+	flag.StringVar(&scopeString,
+		"scopes", "User.Read", "comma-seperated `scopes` to use for request")
+
+	flag.Parse()
+
+	scopes = strings.Split(scopeString, ",")
+
+	return tokenFile, scopes
+}
 
 func main() {
 	// Get Microsoft Application (client) ID
@@ -35,9 +57,18 @@ func main() {
 		log.Fatal("Must set MSCLIENTID")
 	}
 
-	msGraphClient := msgraph4go.New(".token.json", clientID, []string{"Calendars.Read"})
+	// parse command line to get path to the token file and scopes to use in request
+	tokenFile, scopes := ParseCommandLine()
 
-	resp, err := msGraphClient.Get("/me/calendarGroups", nil)
+	// need one remaining arg for request
+	if len(flag.Args()) != 1 {
+		flag.Usage()
+		return
+	}
+
+	msGraphClient := msgraph4go.New(tokenFile, clientID, scopes)
+
+	resp, err := msGraphClient.Get(flag.Arg(0), nil)
 	if err != nil {
 		log.Fatal(err)
 	}

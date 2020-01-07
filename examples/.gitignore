@@ -1,5 +1,5 @@
 photo
-.token.json*
+.token*
 *.swp
 *.html
 *.download
