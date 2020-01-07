@@ -79,6 +79,79 @@ type BaseItem struct {
 	WebURL string `json:"webUrl,omitempty"`
 }
 
+// Calendar is a container for events.
+// It can be a calendar for a user, or the default calendar of an Office 365 group.
+type Calendar struct {
+	OData
+
+	// CanEdit is True if the user can write to the calendar, false otherwise.
+	// This property is true for the user who created the calendar.
+	// This property is also true for a user who has been shared a calendar and granted write access.
+	CanEdit bool `json:"canEdit"`
+
+	// CanShare is True if the user has the permission to share the calendar, false otherwise.
+	// Only the user who created the calendar can share it.
+	CanShare bool `json:"canShare"`
+
+	// CanViewPrivateItems is True if the user can read calendar
+	// items that have been marked private, false otherwise.
+	CanViewPrivateItems bool `json:"canViewPrivateItems"`
+
+	// ChangeKey identifies the version of the calendar object.
+	// Every time the calendar is changed, changeKey changes as well.
+	// This allows Exchange to apply changes to the correct version of the object. Read-only.
+	ChangeKey string `json:"changeKey"`
+
+	// Color specifies the color theme to distinguish the calendar from other calendars in a UI.
+	// The property values are:
+	//   LightBlue=0, LightGreen=1, LightOrange=2, LightGray=3, LightYellow=4, LightTeal=5,
+	//   LightPink=6, LightBrown=7, LightRed=8, MaxColor=9, Auto=-1
+	Color string `json:"color"`
+
+	// ID is the claendars's unique identifier. Read-only.
+	ID string `json:"id"`
+
+	// Name is the calendar name.
+	Name string `json:"name"`
+
+	// Ownmer if set, represents the user who created or added the calendar.
+	// For a calendar that the user created or added, the owner property is set to the user.
+	// For a calendar shared with the user, the owner property is set to the person who shared
+	// that calendar with the user.
+	Owner EmailAddress `json:"owner"`
+}
+
+// CalendarResponse is a collection of Calendar types
+type CalendarResponse struct {
+	OData
+	Value []Calendar `json:"value"`
+}
+
+// CalendarGroup is a group of user calendars
+type CalendarGroup struct {
+	OData
+
+	// Identifies the version of the calendar group.
+	// Every time the calendar group is changed, ChangeKey changes as well.
+	// This allows Exchange to apply changes to the correct version of the object. Read-only.
+	ChangeKey string `json:"changeKey"`
+
+	// The class identifier. Read-only.
+	ClassID string `json:"classId"`
+
+	// The group's unique identifier. Read-only.
+	ID string `json:"id"`
+
+	// The group name.
+	Name string `json:"name"`
+}
+
+// CalendarGroupResponse is a collection of CalendarGroup types
+type CalendarGroupResponse struct {
+	OData
+	Value []CalendarGroup `json:"value"`
+}
+
 // DateTimeTimeZone describes the date, time, and time zone of a point in time.
 type DateTimeTimeZone struct {
 	// DateTime is a single point of time in a combined date and time representation ({date}T{time}.

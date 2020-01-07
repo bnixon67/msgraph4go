@@ -18,8 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package main
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -37,14 +35,15 @@ func main() {
 
 	msGraphClient := msgraph4go.New(".token.json", clientID, []string{"Calendars.Read"})
 
-	resp, err := msGraphClient.Get("/me/calendarGroups", nil)
+	calendars, err := msGraphClient.ListMyCalendars(nil)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	var out bytes.Buffer
-	json.Indent(&out, resp, "", " ")
-	fmt.Println("=== BEGIN ===")
-	fmt.Println(out.String())
-	fmt.Println("=== END ===")
+	for n, calendar := range calendars.Value {
+		fmt.Printf("Calendar %d\n", n)
+		fmt.Printf("Name = %s\n", calendar.Name)
+		fmt.Printf("ID = %s\n", calendar.ID)
+		fmt.Println()
+	}
 }
