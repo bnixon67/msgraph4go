@@ -56,7 +56,7 @@ func main() {
 
 		// loop thru and display each driveItem
 		for _, item := range driveItems.Value {
-			fmt.Println("FILE:", item.Id, item.Name, item.LastModifiedDateTime)
+			fmt.Println("FILE:", item.ID, item.Name, item.LastModifiedDateTime)
 		}
 
 		if driveItems.ODataNextLink == "" {

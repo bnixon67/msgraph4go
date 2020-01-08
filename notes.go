@@ -46,6 +46,30 @@ func (c *MSGraphClient) ListPages(query url.Values) (response PageCollection, er
 	return response, err
 }
 
+// ListSectionPages retrieve a list of page objects from the specified section.
+func (c *MSGraphClient) ListSectionPages(sectionID string, query url.Values) (response PageCollection, err error) {
+	body, err := c.Get("/me/onenote/sections/"+sectionID+"/pages", query)
+	if err != nil {
+		return response, err
+	}
+
+	err = json.Unmarshal(body, &response)
+
+	return response, err
+}
+
+// ListSections retrives a list of Section objects
+func (c *MSGraphClient) ListSections(query url.Values) (response SectionResponse, err error) {
+	body, err := c.Get("/me/onenote/sections", query)
+	if err != nil {
+		return response, err
+	}
+
+	err = json.Unmarshal(body, &response)
+
+	return response, err
+}
+
 func (c *MSGraphClient) GetPage(id string, query url.Values) (response Page, err error) {
 	body, err := c.Get("/me/onenote/pages/"+id, query)
 	if err != nil {

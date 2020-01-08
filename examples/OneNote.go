@@ -98,36 +98,38 @@ func main() {
 	fmt.Printf("pages in response = %d\n\n", len(pagesResponse.Value))
 
 	for n, page := range pagesResponse.Value {
-		fmt.Printf("page[%3d]\t%s\n%s", n, page.Title, page.Id)
+		fmt.Printf("page[%3d]\t%s\n%s", n, page.Title, page.ID)
 		fmt.Printf("\t%s\n", page.ParentNotebook.DisplayName)
 
 		// ----- Get Page Content
-		content, err := msGraphClient.GetPageContent(page.Id, nil)
+		content, err := msGraphClient.GetPageContent(page.ID, nil)
 		if err != nil {
 			log.Fatal(err)
 		}
 
 		// ----- Write Page Content
-		writeContent(page.Id+".html", content)
+		writeContent(page.ID+".html", content)
 
 	}
 	fmt.Println()
 	//showResponse(pagesResponse)
 
 	// ----- Get Page
-	query = url.Values{}
-	query.Set("$expand", "parentNotebook")
-	page, err := msGraphClient.GetPage(
-		"0-30121ca3825c4aac8b0719aa50aa3634!1-16BE860D241E39E5!37639",
-		query,
-	)
-	if err != nil {
-		log.Fatal(err)
-	}
+	/*
+		query = url.Values{}
+		query.Set("$expand", "parentNotebook")
+		page, err := msGraphClient.GetPage(
+			page.Id,
+			query,
+		)
+		if err != nil {
+			log.Fatal(err)
+		}
 
-	fmt.Printf("id=%v\n", page.Id)
-	fmt.Printf("title=%v\n", page.Title)
-	fmt.Printf("link=%v\n", page.Links.OneNoteWebUrl.Href)
-	fmt.Printf("notebook=%v\n", page.ParentNotebook.DisplayName)
-	//showResponse(page)
+		fmt.Printf("id=%v\n", page.Id)
+		fmt.Printf("title=%v\n", page.Title)
+		fmt.Printf("link=%v\n", page.Links.OneNoteWebUrl.Href)
+		fmt.Printf("notebook=%v\n", page.ParentNotebook.DisplayName)
+		//showResponse(page)
+	*/
 }

@@ -49,7 +49,7 @@ type Attachment struct {
 // Resources that derive from baseItem include: drive, driveItem, site, sharedDriveItem
 type BaseItem struct {
 	// The unique identifier of the drive. Read-only.
-	Id string `json:"id"`
+	ID string `json:"id"`
 
 	// Identity of the user, device, or application which created the item. Read-only.
 	CreatedBy *IdentitySet `json:"createdBy,omitempty"`
@@ -229,7 +229,7 @@ type DriveItem struct {
 	Folder *Folder `json:"folder,omitempty"`
 
 	// The unique identifier of the item within the Drive. Read-only.
-	Id string `json:"id,omitempty"`
+	ID string `json:"id,omitempty"`
 
 	// TODO: image
 
@@ -403,7 +403,7 @@ type Identity struct {
 	EMail string `json:"email,omitempty"`
 
 	// Unique identifier for the identity.
-	Id string `json:"id,omitempty"`
+	ID string `json:"id,omitempty"`
 }
 
 // IdentitySet is a keyed collection of identity resources. It is used
@@ -449,7 +449,7 @@ type ItemReference struct {
 	DriveType string `json:"driveType,omitempty"`
 
 	// Unique identifier of the item in the drive. Read-only.
-	Id string `json:"id,omitempty"`
+	ID string `json:"id,omitempty"`
 
 	// The name of the item being referenced. Read-only.
 	Name string `json:"name,omitempty"`
@@ -629,7 +629,7 @@ type Notebook struct {
 	CreatedDateTime string `json:"createdDateTime"`
 
 	// The unique identifier of the notebook. Read-only.
-	Id string `json:"id"`
+	ID string `json:"id"`
 
 	// Indicates whether this is the user's default notebook. Read-only.
 	IsDefault bool `json:"isDefault"`
@@ -714,7 +714,7 @@ type Page struct {
 	CreatedDateTime string `json:"createdDateTime"`
 
 	// The unique identifier of the page. Read-only.
-	Id string `json:"id"`
+	ID string `json:"id"`
 
 	// The date and time when the page was last modified.
 	LastModifiedDateTime string `json:"lastModifiedDateTime"`
@@ -802,7 +802,7 @@ type PermissionsResponse struct {
 // '48x48', '64x64', '96x96', '120x120', '240x240', '360x360','432x432', '504x504', and '648x648'.
 type ProfilePhoto struct {
 	// Id of the photo. Read-only.
-	Id string `json:"id"`
+	ID string `json:"id"`
 
 	// Height of the photo. Read-only.
 	Height int `json:"height"`
@@ -870,7 +870,7 @@ type RemoteItem struct {
 	Folder *Folder `json:"folder,omitempty"`
 
 	// Unique identifier for the remote item in its drive. Read-only.
-	Id string `json:"id,omitempty"`
+	ID string `json:"id,omitempty"`
 
 	// Identity of the user, device, and application which last modified the item. Read-only.
 	LastModifiedBy *IdentitySet `json:"lastModifiedBy,omitempty"`
@@ -915,7 +915,7 @@ type Section struct {
 	CreatedDateTime string `json:"createdDateTime"`
 
 	// The unique identifier of the section. Read-only.
-	Id string `json:"id"`
+	ID string `json:"id"`
 
 	// Indicates whether this is the user's default section. Read-only.
 	IsDefault bool `json:"isDefault"`
@@ -937,6 +937,15 @@ type Section struct {
 
 	// The endpoint where you can get details about the section. Read-only.
 	Self string `json:"self"`
+
+	// The notebook that contains the section. Read-only.
+	ParentNotebook Notebook `json:"parentNotebook"`
+}
+
+// SectionResponse is a collection of Section types
+type SectionResponse struct {
+	OData
+	Value []Section `json:"value"`
 }
 
 // SharePointIds groups the various identifiers for an item stored in
@@ -1025,7 +1034,7 @@ type User struct {
 	GivenName string `json:"givenName,omitempty"`
 
 	// The unique identifier for the user. Read-only.
-	Id string `json:"id,omitempty"`
+	ID string `json:"id,omitempty"`
 
 	// The user’s job title.
 	JobTitle string `json:"jobTitle,omitempty"`

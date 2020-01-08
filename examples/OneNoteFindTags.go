@@ -140,7 +140,7 @@ func main() {
 				*/
 
 				// ----- Get Page Content
-				content, err := msGraphClient.GetPageContent(page.Id, nil)
+				content, err := msGraphClient.GetPageContent(page.ID, nil)
 				if err != nil {
 					fmt.Printf("ERROR  %s/%s/%s\n",
 						page.ParentNotebook.DisplayName,
