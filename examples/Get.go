@@ -75,7 +75,5 @@ func main() {
 
 	var out bytes.Buffer
 	json.Indent(&out, resp, "", " ")
-	fmt.Println("=== BEGIN ===")
 	fmt.Println(out.String())
-	fmt.Println("=== END ===")
 }
