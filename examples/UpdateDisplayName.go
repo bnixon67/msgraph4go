@@ -35,11 +35,11 @@ func ParseCommandLine() (tokenFile string, scopes []string, user string) {
 	}
 
 	flag.StringVar(&tokenFile, "token", ".token.json", "path to `file` to use for token")
-	flag.StringVar(&user, "user", "me", "user to use for update")
+	flag.StringVar(&user, "user", "me", "user to get contacts for")
 
 	var scopeString string
 	flag.StringVar(&scopeString,
-		"scopes", "Contacts.ReadWrite", "comma-seperated `scopes` to use for request")
+		"scopes", "Contacts.Read", "comma-seperated `scopes` to use for request")
 
 	flag.Parse()
 
@@ -60,19 +60,35 @@ func main() {
 	tokenFile, scopes, user := ParseCommandLine()
 
 	// check for no remaining args
-	if len(flag.Args()) != 1 {
+	if len(flag.Args()) != 0 {
 		flag.Usage()
 		return
 	}
 
 	msGraphClient := msgraph4go.New(tokenFile, clientID, scopes)
 
-	jsonStr := strings.NewReader("{ \"displayName\": \"Tlast, Tfirst\" }")
-
-	contact, err := msGraphClient.UpdateContact(nil, user, flag.Arg(0), jsonStr)
+	contacts, err := msGraphClient.ListContacts(nil, user)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println(msgraph4go.VarToJsonString(contact))
+	for n, contact := range contacts.Value {
+		fmt.Printf("Updating contact %d\n", n)
+		//fmt.Printf("\tID: %s\n", contact.ID)
+		fmt.Printf("\tSurname: %s GivenName: %s\n", contact.Surname, contact.GivenName)
+		fmt.Printf("\tOld DisplayName: %s\n", contact.DisplayName)
+
+		//updateStr := fmt.Sprintf(`{ "displayName": "%s, %s" }`,
+		//		contact.Surname, contact.GivenName)
+		updateStr := fmt.Sprintf(`{ "displayName": "%s %s" }`,
+			contact.GivenName, contact.Surname)
+		reader := strings.NewReader(updateStr)
+
+		updatedContact, err := msGraphClient.UpdateContact(nil, user, contact.ID, reader)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Printf("\tNew DisplayName: %s\n", updatedContact.DisplayName)
+		fmt.Println()
+	}
 }

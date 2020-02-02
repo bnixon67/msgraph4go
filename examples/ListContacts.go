@@ -27,7 +27,7 @@ import (
 	"github.com/bnixon67/msgraph4go"
 )
 
-func ParseCommandLine() (tokenFile string, scopes []string) {
+func ParseCommandLine() (tokenFile string, scopes []string, user string) {
 	flag.Usage = func() {
 		fmt.Fprintf(flag.CommandLine.Output(), "usage: %s [options] request\n", os.Args[0])
 		fmt.Fprintln(flag.CommandLine.Output(), "options:")
@@ -35,16 +35,17 @@ func ParseCommandLine() (tokenFile string, scopes []string) {
 	}
 
 	flag.StringVar(&tokenFile, "token", ".token.json", "path to `file` to use for token")
+	flag.StringVar(&user, "user", "me", "user to get contacts for")
 
 	var scopeString string
 	flag.StringVar(&scopeString,
-		"scopes", "User.Read", "comma-seperated `scopes` to use for request")
+		"scopes", "Contacts.Read", "comma-seperated `scopes` to use for request")
 
 	flag.Parse()
 
 	scopes = strings.Split(scopeString, ",")
 
-	return tokenFile, scopes
+	return tokenFile, scopes, user
 }
 
 func main() {
@@ -56,7 +57,7 @@ func main() {
 	}
 
 	// parse command line to get path to the token file and scopes to use in request
-	tokenFile, scopes := ParseCommandLine()
+	tokenFile, scopes, user := ParseCommandLine()
 
 	// check for no remaining args
 	if len(flag.Args()) != 0 {
@@ -66,7 +67,7 @@ func main() {
 
 	msGraphClient := msgraph4go.New(tokenFile, clientID, scopes)
 
-	contacts, err := msGraphClient.ListMyContacts(nil)
+	contacts, err := msGraphClient.ListContacts(nil, user)
 	if err != nil {
 		log.Fatal(err)
 	}
