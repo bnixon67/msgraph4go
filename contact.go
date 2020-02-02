@@ -24,10 +24,20 @@ import (
 )
 
 // ListMyContacts gets all contacts in a user's mailbox.
-func (c *MSGraphClient) ListMyContacts(query url.Values) (response ContactResponse, err error) {
+//
+// user must be "me", userPrincipalName, or id
+func (c *MSGraphClient) ListContacts(query url.Values, user string) (response ContactResponse, err error) {
 	var body []byte
 
-	body, err = c.Get("/me/contacts", query)
+	var url string
+
+	if user == "me" {
+		url = "/me/contacts"
+	} else {
+		url = "/users/" + user + "/contacts"
+	}
+
+	body, err = c.Get(url, query)
 	if err != nil {
 		return response, err
 	}
@@ -38,11 +48,17 @@ func (c *MSGraphClient) ListMyContacts(query url.Values) (response ContactRespon
 }
 
 // UpdateContact updates the properties of a contact object.
-func (c *MSGraphClient) UpdateContact(query url.Values, contactID string, data io.Reader) (contact Contact, err error) {
+//
+// user must be "me", userPrincipalName, or id
+func (c *MSGraphClient) UpdateContact(query url.Values, user string, contactID string, data io.Reader) (contact Contact, err error) {
 	var body []byte
 	var url string
 
-	url = "/me/contacts/" + contactID
+	if user == "me" {
+		url = "/me/contacts/" + contactID
+	} else {
+		url = "/users/" + user + "/contacts/" + contactID
+	}
 
 	body, err = c.Patch(url, query, data)
 	if err != nil {
