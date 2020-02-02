@@ -290,7 +290,7 @@ func New(tokenFileName string, clientID string, scopes []string) *MSGraphClient 
 		authURL := conf.AuthCodeURL(state, oauth2.AccessTypeOffline)
 
 		// instruct the user to vist the authentication URL
-		fmt.Println("Vist the following URL in a browser to authenticate this application")
+		fmt.Println("Visit the following URL in a browser to authenticate this application")
 		fmt.Println("After authentication, copy the response URL from the browser")
 		fmt.Println(authURL)
 
