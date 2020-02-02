@@ -21,6 +21,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"net/url"
 	"os"
 	"strings"
 
@@ -67,15 +68,43 @@ func main() {
 
 	msGraphClient := msgraph4go.New(tokenFile, clientID, scopes)
 
-	contacts, err := msGraphClient.ListContacts(nil, user)
-	if err != nil {
-		log.Fatal(err)
-	}
+	// nextLink will contain the link to the next set of items, if any
+	var nextLink *url.URL
 
-	for n, contact := range contacts.Value {
-		fmt.Printf("Contact %d %s\n", n, contact.ID)
-		fmt.Printf("GivenName = %s Surname = %s\n", contact.GivenName, contact.Surname)
-		fmt.Printf("DisplayName = %s\n", contact.DisplayName)
-		fmt.Println()
+	query := url.Values{}
+
+	n := 1
+
+	// loop until no more results
+	for {
+		contacts, err := msGraphClient.ListContacts(query, user)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		for _, contact := range contacts.Value {
+			fmt.Printf("Contact %d %s\n", n, contact.ID)
+			fmt.Printf("GivenName = %s Surname = %s\n",
+				contact.GivenName, contact.Surname)
+			fmt.Printf("DisplayName = %s\n", contact.DisplayName)
+			fmt.Println()
+			n++
+		}
+
+		// check if additional results
+		if contacts.ODataNextLink == "" {
+			// if ODataNextLink is empty, then no more items
+			break
+		} else {
+			// parse nextLink for query parameters
+			nextLink, err = url.Parse(contacts.ODataNextLink)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			// set query parameters for nextLink
+			query = nextLink.Query()
+		}
+
 	}
 }
