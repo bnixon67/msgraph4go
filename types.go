@@ -152,6 +152,154 @@ type CalendarGroupResponse struct {
 	Value []CalendarGroup `json:"value"`
 }
 
+// Contact is an item in Outlook where you can organize and save information about the
+// people and organizations you communicate with. Contacts are contained in contact folders.
+type Contact struct {
+	// The name of the contact's assistant.
+	AssistantName string `json:"assistantName"`
+
+	// The contact's birthday. The Timestamp type represents date and time information
+	// using ISO 8601 format and is always in UTC time. For example, midnight UTC on
+	// Jan 1, 2014 would look like this: '2014-01-01T00:00:00Z'
+	Birthday string `json:"birthday"`
+
+	// The contact's business address.
+	BusinessAddress struct {
+		PhysicalAddress
+	} `json:"businessAddress"`
+
+	// The business home page of the contact.
+	BusinessHomePage string `json:"businessHomePage"`
+
+	// The contact's business phone numbers.
+	BusinessPhones []string `json:"businessPhones"`
+
+	// The categories associated with the contact.
+	Categories []string `json:"categories"`
+
+	// Identifies the version of the contact. Every time the contact is changed,
+	// ChangeKey changes as well. This allows Exchange to apply changes to the
+	// correct version of the object.
+	ChangeKey string `json:"changeKey"`
+
+	// The names of the contact's children.
+	Children []string `json:"children"`
+
+	// The name of the contact's company.
+	CompanyName string `json:"companyName"`
+
+	// The time the contact was created. The Timestamp type represents date and time
+	// information using ISO 8601 format and is always in UTC time. For example,
+	// midnight UTC on Jan 1, 2014 would look like this: '2014-01-01T00:00:00Z'
+	CreatedDateTime string `json:"createdDateTime"`
+
+	// The contact's department.
+	Department string `json:"department"`
+
+	// The contact's display name. You can specify the display name in a create or update
+	// operation. Note that later updates to other properties may cause an automatically
+	// generated value to overwrite the displayName value you have specified. To preserve
+	// a pre-existing value, always include it as displayName in an update operation.
+	DisplayName string `json:"displayName"`
+
+	// The contact's email addresses.
+	EmailAddresses []struct {
+		EmailAddress
+	} `json:"emailAddresses"`
+
+	// The name the contact is filed under.
+	FileAs string `json:"fileAs"`
+
+	// The contact's generation.
+	Generation string `json:"generation"`
+
+	// The contact's given name.
+	GivenName string `json:"givenName"`
+
+	// The contact's home address.
+	HomeAddress struct {
+		PhysicalAddress
+	} `json:"homeAddress"`
+
+	// The contact's home phone numbers.
+	HomePhones []string `json:"homePhones"`
+
+	// The contact's unique identifier. Read-only.
+	ID string `json:"id"`
+
+	// The contact's instant messaging (IM) addresses.
+	ImAddresses []string `json:"imAddresses"`
+
+	// The contact's initials.
+	Initials string `json:"initials"`
+
+	// The contact’s job title.
+	JobTitle string `json:"jobTitle"`
+
+	// The time the contact was modified. The Timestamp type represents date and time
+	// information using ISO 8601 format and is always in UTC time. For example, midnight
+	// UTC on Jan 1, 2014 would look like this: '2014-01-01T00:00:00Z'
+	LastModifiedDateTime string `json:"lastModifiedDateTime"`
+
+	// The name of the contact's manager.
+	Manager string `json:"manager"`
+
+	// The contact's middle name.
+	MiddleName string `json:"middleName"`
+
+	// The contact's mobile phone number.
+	MobilePhone string `json:"mobilePhone"`
+
+	// The contact's nickname.
+	NickName string `json:"nickName"`
+
+	// The location of the contact's office.
+	OfficeLocation string `json:"officeLocation"`
+
+	// Other addresses for the contact.
+	OtherAddress struct {
+		PhysicalAddress
+	} `json:"otherAddress"`
+
+	// The ID of the contact's parent folder.
+	ParentFolderID string `json:"parentFolderId"`
+
+	// The user's notes about the contact.
+	PersonalNotes string `json:"personalNotes"`
+
+	// The contact's profession.
+	Profession string `json:"profession"`
+
+	// The name of the contact's spouse/partner.
+	SpouseName string `json:"spouseName"`
+
+	// The contact's surname.
+	Surname string `json:"surname"`
+
+	// The contact's title.
+	Title string `json:"title"`
+
+	// The phonetic Japanese company name of the contact.
+	YomiCompanyName string `json:"yomiCompanyName"`
+
+	// The phonetic Japanese given name (first name) of the contact.
+	YomiGivenName string `json:"yomiGivenName"`
+
+	// The phonetic Japanese surname (last name) of the contact.
+	YomiSurname string `json:"yomiSurname"`
+
+	// Optional contact picture. You can get or set a photo for a contact.
+	Photo struct {
+		ProfilePhoto
+	} `json:"photo"`
+}
+
+// ContactResponse is a collection of Calendar types
+type ContactResponse struct {
+	OData
+	Value []Contact `json:"value"`
+}
+
 // DateTimeTimeZone describes the date, time, and time zone of a point in time.
 type DateTimeTimeZone struct {
 	// DateTime is a single point of time in a combined date and time representation ({date}T{time}.
@@ -793,6 +941,24 @@ type Permission struct {
 type PermissionsResponse struct {
 	OData
 	Value []Permission `json:"value"`
+}
+
+// PhysicalAddress represents the street address of a resource such as a contact or event.
+type PhysicalAddress struct {
+	// The city.
+	City string `json:"city"`
+
+	// The country or region. It's a free-format string value, for example, "United States".
+	CountryOrRegion string `json:"countryOrRegion"`
+
+	// The postal code.
+	PostalCode string `json:"postalCode"`
+
+	// The state.
+	State string `json:"state"`
+
+	// The street.
+	Street string `json:"street"`
 }
 
 // ProfilePhoto is a profile photo of a user, group or an Outlook contact accessed from Exchange Online.

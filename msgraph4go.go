@@ -182,6 +182,61 @@ func (c *MSGraphClient) Put(urlString string, query url.Values, data io.Reader) 
 	return body, err
 }
 
+// Patch executes the MS Graph API call, returning the response body.
+//
+// Query parmeters can be included to specify and control the amount of data returned in a response.
+//
+// Exact query parameters varies from one API operation to another.
+//
+// More information can be found at https://docs.microsoft.com/en-us/graph/query-parameters
+func (c *MSGraphClient) Patch(urlString string, query url.Values, data io.Reader) (body []byte, err error) {
+
+	// parse the URL string
+	url, err := url.Parse(msGraphBase + urlString)
+	if err != nil {
+		return body, err
+	}
+
+	// add the query parameters to the URL
+	url.RawQuery = query.Encode()
+
+	//fmt.Println("DEBUG:", url.String())
+	req, err := http.NewRequest(http.MethodPatch, url.String(), data)
+	if err != nil {
+		return body, err
+	}
+
+	req.Header.Add("Content-type", "application/json")
+
+	// execute the request
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		// handle error
+		return body, err
+	}
+	defer resp.Body.Close()
+
+	// read the body
+	body, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return body, err
+	}
+
+	// check if a MS Graph error occured and return a GraphErrorResponse
+	if codeIsError(resp.StatusCode) {
+		resError := GraphErrorResponse{}
+
+		err = json.Unmarshal(body, &resError)
+		if err != nil {
+			return nil, err
+		}
+
+		return nil, &resError
+	}
+
+	return body, err
+}
+
 // MSGraphClient is a client connection to the MS Graph API
 type MSGraphClient struct {
 	httpClient *http.Client
