@@ -21,6 +21,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"net/url"
 	"os"
 	"strings"
 
@@ -39,7 +40,7 @@ func ParseCommandLine() (tokenFile string, scopes []string, user string) {
 
 	var scopeString string
 	flag.StringVar(&scopeString,
-		"scopes", "Contacts.Read", "comma-seperated `scopes` to use for request")
+		"scopes", "Contacts.ReadWrite", "comma-seperated `scopes` to use for request")
 
 	flag.Parse()
 
@@ -67,28 +68,54 @@ func main() {
 
 	msGraphClient := msgraph4go.New(tokenFile, clientID, scopes)
 
-	contacts, err := msGraphClient.ListContacts(nil, user)
-	if err != nil {
-		log.Fatal(err)
-	}
+	// nextLink will contain the link to the next set of items, if any
+	var nextLink *url.URL
 
-	for n, contact := range contacts.Value {
-		fmt.Printf("Updating contact %d\n", n)
-		//fmt.Printf("\tID: %s\n", contact.ID)
-		fmt.Printf("\tSurname: %s GivenName: %s\n", contact.Surname, contact.GivenName)
-		fmt.Printf("\tOld DisplayName: %s\n", contact.DisplayName)
+	query := url.Values{}
 
-		//updateStr := fmt.Sprintf(`{ "displayName": "%s, %s" }`,
-		//		contact.Surname, contact.GivenName)
-		updateStr := fmt.Sprintf(`{ "displayName": "%s %s" }`,
-			contact.GivenName, contact.Surname)
-		reader := strings.NewReader(updateStr)
+	n := 1
 
-		updatedContact, err := msGraphClient.UpdateContact(nil, user, contact.ID, reader)
+	// loop until no more results
+	for {
+		contacts, err := msGraphClient.ListContacts(query, user)
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Printf("\tNew DisplayName: %s\n", updatedContact.DisplayName)
-		fmt.Println()
+
+		for _, contact := range contacts.Value {
+			fmt.Printf("Updating contact %d\n", n)
+			//fmt.Printf("\tID: %s\n", contact.ID)
+			fmt.Printf("\tSurname: %s GivenName: %s\n",
+				contact.Surname, contact.GivenName)
+			fmt.Printf("\tOld DisplayName: %s\n", contact.DisplayName)
+			n++
+
+			updateStr := fmt.Sprintf(`{ "displayName": "%s, %s" }`,
+				contact.Surname, contact.GivenName)
+			reader := strings.NewReader(updateStr)
+
+			updatedContact, err := msGraphClient.UpdateContact(
+				nil, user, contact.ID, reader)
+			if err != nil {
+				log.Fatal(err)
+			}
+			fmt.Printf("\tNew DisplayName: %s\n", updatedContact.DisplayName)
+			fmt.Println()
+		}
+
+		// check if additional items
+		if contacts.ODataNextLink == "" {
+			// if ODataNextLink is empty, then no more items
+			break
+		} else {
+			// parse nextLink for query parameters
+			nextLink, err = url.Parse(contacts.ODataNextLink)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			// set query parameters for nextLink
+			query = nextLink.Query()
+		}
 	}
 }
