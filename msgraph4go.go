@@ -287,7 +287,11 @@ func New(tokenFileName string, clientID string, scopes []string) *MSGraphClient 
 		state := randomBytesBase64(32)
 
 		// get authentication URL for offline access
-		authURL := conf.AuthCodeURL(state, oauth2.AccessTypeOffline)
+		authURL := conf.AuthCodeURL(
+			state,
+			oauth2.AccessTypeOffline,
+			oauth2.SetAuthURLParam("prompt", "consent"),
+		)
 
 		// instruct the user to vist the authentication URL
 		fmt.Println("Visit the following URL in a browser to authenticate this application")
