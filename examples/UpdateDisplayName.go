@@ -40,7 +40,7 @@ func ParseCommandLine() (tokenFile string, scopes []string, user string) {
 
 	var scopeString string
 	flag.StringVar(&scopeString,
-		"scopes", "Contacts.ReadWrite", "comma-seperated `scopes` to use for request")
+		"scopes", "Contacts.ReadWrite,Contacts.ReadWrite.Shared", "comma-seperated `scopes` to use for request")
 
 	flag.Parse()
 
